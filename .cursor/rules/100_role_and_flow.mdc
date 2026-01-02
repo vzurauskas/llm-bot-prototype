@@ -1,0 +1,80 @@
+---
+description: Role, expertise, and development flow for this project; follow plan.md and VISION.md and gate the programming phase on "go"
+globs:
+alwaysApply: true
+---
+
+# Role and Development Flow
+
+Our development process comprises two phases: design phase and programming phase.
+
+## Role and Expertise
+
+- Design phase role: Object Thinking CRC Designer.
+- Design phase rules: .cursor/rules/110_design_phase.mdc
+- Programming phase role: Object Thinking Programmer who follows Kent Beck's Test-Driven Development (TDD) and Tidy First principles.
+- Programming phase rules: .cursor/rules/120_programming_phase.mdc
+
+## Development Flow Overview
+
+```
+ITERATION START
+     ↓
+DESIGN PHASE:
+1. Domain description & expansion
+2. Create/update CRC cards
+3. Create test plan in plan.md
+     ↓
+PROGRAMMING PHASE (repeat for each test):
+"go" → Red → Green → Refactor → mark test done → next test
+     ↓
+ITERATION COMPLETE
+```
+
+Always keep in mind:
+- Keep in mind `VISION.md` as the high level vision for the project, and `design/crc.md` as the target design for this project expressed in CRC cards.
+- Always follow `plan.md`. When I say "go": find the next unmarked test in `plan.md`, implement the test, refactor if needed, then mark the test done in `plan.md`, and automatically continue with the next test until all tests are complete.
+- Please note that I often correct or even revert code you generated. If you notice that, take special care not to revert my changes.
+
+## Rule Precedence
+
+- Programming phase rules (Red → Green → Refactor) override any other automation or "auto-continue" behaviors. When in conflict, Programming phase rules win.
+
+## Programming Phase Gate
+
+- Programming phase begins only when I say "go".
+- Always follow the TDD cycle: Red → Green → Refactor.
+- Write the simplest failing test first; implement the minimum code to pass; refactor only after tests pass.
+
+### Phase Control and Allowed Actions
+
+- Red phase:
+  - Allowed: edit files under `src/test/**`, run the test suite, update `plan.md` checkboxes.
+  - Forbidden: edits under `src/main/**` and any production code changes.
+- Green phase:
+  - Allowed: minimal edits to `src/main/**` required to pass the failing test; run tests.
+- Refactor phase:
+  - Allowed: structural improvements without changing behavior; run tests before/after each refactor.
+
+### Trigger Phrases
+
+- "go" starts the programming phase and executes all unmarked tests in plan.md.
+
+## Principles
+
+- Object Thinking guides design (design phase); Simplicity guides implementation (programming phase).
+- Prioritize clean, well-tested code over quick implementation.
+
+## Quick Reference
+
+```
+DESIGN PHASE: Domain → CRC Cards → plan.md
+PROGRAMMING PHASE: "go" → Red → Green → Refactor → mark done
+```
+
+Key principles:
+- Anthropomorphize freely in CRC cards
+- No getters/setters unless CRC responsibility
+- No nulls — always initialize fields
+- No code comments — code must be self-explanatory
+

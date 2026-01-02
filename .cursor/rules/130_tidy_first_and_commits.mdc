@@ -1,0 +1,28 @@
+---
+alwaysApply: false
+---
+# Tidy First and Commit Discipline
+
+## Tidy First Approach
+
+- Separate changes into:
+  1. Structural: rearranging code without changing behavior (renaming, extracting methods, moving code)
+  2. Behavioral: adding/modifying functionality (marking a test as done in `plan.md` can be part of this)
+- Never mix structural and behavioral changes in the same commit.
+- Make structural changes first when both are needed.
+- Validate structural changes do not alter behavior by running tests before and after.
+
+## Commit Discipline
+
+Only commit when:
+1. All tests are passing.
+2. All compiler/linter warnings are resolved.
+3. The change represents a single logical unit of work.
+4. The message clearly states whether the commit is structural or behavioral.
+
+Additional guidance:
+- Prefer small, frequent commits.
+- Write a clear title and concise description (max 4 lines) focusing on why, not what.
+- Good: "Structural change: Encapsulate Script usage in Fighter to increase cohesion."
+- Bad: long detailed list of every change.
+

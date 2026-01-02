@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+    <!-- Allow getter/setter naming in specific places if required -->
+    <!-- Example:
+    <suppress checks="MethodName" files="src/main/java/com/example/legacy/.*"/>
+    -->
+
+    <!-- Scope null assignment/return rules to src/main only by suppressing tests -->
+    <suppress checks="RegexpSinglelineJava" files="src/test/java/.*"/>
+
+    <!-- Allow longer lines in tests to avoid changing expected strings -->
+    <suppress checks="LineLength" files="src/test/java/.*"/>
+</suppressions>
+

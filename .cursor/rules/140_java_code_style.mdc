@@ -1,0 +1,98 @@
+---
+description: Java code style for this project — no nulls, constructor patterns, naming, tests, and line-breaking rules
+globs:
+  - "src/**/*.java"
+alwaysApply: false
+---
+
+# Java Code Style
+
+## General
+- Do not use nulls. Always initialize fields to non-null values.
+- Constructors:
+  1. Primary constructor: only sets fields. Only one per class. Place below all other constructors.
+  2. Secondary constructors: only delegate to other secondary or primary constructors. Multiple allowed.
+- Never use setters unless explicitly a CRC responsibility; normally set all fields via constructors.
+- Avoid getters unless explicitly a CRC responsibility.
+- Never write code comments. Code must be self-explanatory through clear naming and simple structure.
+
+## Naming
+
+### Methods
+- Boolean-returning: phrased as questions, e.g., `isAlive`, `isParrying`, `hasWeapon`.
+- Non-boolean-returning: nouns, e.g., `name`, `hitPoints`, `weapon`.
+- Actions: verbs, e.g., `strike`, `parry`, `takeDamage`.
+
+### Tests
+- Name test methods as present-tense sentences of behavior, e.g., `fighterDiesWhenHitPointsReachZero`, `fighterWithWeaponDealsMoreDamageThanWithout`.
+
+## Formatting
+
+- Max line length: 80 characters. Use line breaks to keep within this limit.
+
+### Braces and Method Bodies
+
+- Opening brace on the same line as the declaration.
+- Method/constructor body starts on the next line after the opening brace.
+- Always use braces, even for single-statement blocks.
+
+Correct:
+```java
+public void doThing() {
+    if (condition) {
+        call();
+    }
+}
+```
+
+Incorrect:
+```java
+public void doThing() { if (condition) call(); }
+```
+
+### Line Breaking Rules for Method/Constructor Calls
+
+Rule: If broken across lines, break after the opening parenthesis and also before the closing parenthesis.
+
+Correct examples:
+```java
+// Short enough to fit on one line - no line breaks needed
+Fighter bob = new Fighter("Bob", 100);
+
+// Breaks after opening parenthesis, breaks before closing parenthesis
+Fighter alice = new Fighter(
+    "Alice", 100,
+    new FixedScript(BodyPart.HEAD, BodyPart.TORSO)
+);
+
+// Multiple parameters that need breaking
+assertTrue(
+    description.contains("expected text"),
+    "Error message here"
+);
+
+// Long parameter on a separate line, multiple short parameters grouped on
+// another line
+String line = String.format(
+    "    %s parry=%s, strike=%s [%s]",
+    fighter, parry, target, outcome
+);
+```
+
+Incorrect examples:
+```java
+// BAD: Breaks after opening parenthesis but NOT before closing parenthesis
+Fighter bob = new Fighter("Bob", 100,
+    new FixedScript(BodyPart.HEAD, BodyPart.TORSO));
+
+// BAD: Breaks in the middle, not along parentheses
+Fighter alice = new Fighter("Alice", 100,
+    new FixedScript(BodyPart.HEAD, BodyPart.TORSO)
+);
+
+// BAD: Breaks in the middle, not along parentheses
+String line = String.format("    %s parry=%s, strike=%s [%s]", 
+    fighter, parry, target, outcome);
+```
+
+Key principle: Either keep the entire call on one line OR break after the opening parenthesis AND before the closing parenthesis. Never mix these styles.

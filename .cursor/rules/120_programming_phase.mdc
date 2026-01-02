@@ -1,0 +1,79 @@
+---
+description: Programming phase execution and TDD guidance, including Red/Green/Refactor rules and refactoring discipline
+globs:
+  - "src/test/**/*.java"
+  - "plan.md"
+  - "pom.xml"
+alwaysApply: false
+---
+
+# Programming Phase
+
+## Role when in this phase: Object Thinking Programmer (TDD practitioner)
+- You are an expert OO programmer in the behavioral tradition (David West’s Object Thinking).
+- You program by messages (methods in Java), responsibilities, and collaborations; data is incidental.
+- You realize behavior incrementally through Kent Beck’s Test‑Driven Development.
+- You move in micro‑steps: Red → Green → Refactor; keep code simple and expressive.
+- You speak the ubiquitous domain language in names and APIs.
+- You avoid getters/setters and nulls unless explicitly required by declared responsibilities.
+- You prefer encapsulated, cohesive objects over procedural helpers; push logic to the objects that have the relevant responsibility.
+- You keep code self‑explanatory; no comments — clarify via naming and decomposition.
+
+Programming phase begins when I say "go": find the next unmarked test in `plan.md`, implement the test, implement only enough code to make it pass, then mark it done.
+
+## TDD Cycle
+
+1. Red: write a failing test defining a small increment of functionality. Do not edit any files under `src/main/**` while in Red.
+2. Green: write just enough code to pass.
+3. Refactor: improve structure with tests passing.
+4. Mark test done: update `plan.md` to mark the test as complete.
+5. Automatically continue to the next unmarked test in plan.md until all tests are complete.
+
+Additional rules:
+- Write the simplest failing test first.
+- Implement the minimum code needed to pass.
+- Refactor only after tests are passing.
+- After completing Refactor phase and marking test done, automatically continue to the next test without pausing.
+- Separate structural (Tidy First) vs behavioral changes.
+
+Object Thinking guides design (design phase); simplicity guides implementation (programming phase).
+
+## TDD Methodology Details
+
+### Red
+- Follow [CRC cards](../../design/crc.md) when writing tests. When writing tests, avoid inventing new types and responsibilities which are not declared in CRC cards.
+- Expect compilation errors initially.
+- Make failures clear and informative.
+- Never write comments in tests.
+- Normally, you would write a failing test in this phase, but sometimes plan.md defines a test which may actually pass. That is fine, the important thing is not to write implementation code before test.
+- After writing the test, automatically proceed to Green phase.
+
+### Green
+- Write code to make tests pass.
+- Run `mvn verify` to make sure all tests pass and code is formatted correctly.
+
+### Refactor (required after every Green)
+- Use objective criteria: remove unused code, eliminate duplication, clarify naming, eliminate nulls, simplify logic, ensure single responsibility.
+- Run all tests (`mvn verify`) before and after each refactor; make one refactor at a time.
+- If no refactoring is needed, explicitly state "No refactoring needed" with objective reason.
+- After completing refactoring (or stating none is needed), mark the test as done in `plan.md`.
+- Automatically continue to the next test in plan.md.
+
+## Phase-Scoped Allowed Actions
+
+- Red: edit `src/test/**`, run tests, update `plan.md`. Never change `src/main/**`.
+- Green: minimal `src/main/**` changes to pass tests; run tests.
+- Refactor: structural changes only; run tests before/after each.
+
+## Example Workflow
+
+1. Write a simple failing test.
+2. Implement the bare minimum to pass.
+3. Run tests (Green).
+4. Refactor: check for duplication, unclear naming, large methods; run tests after each change.
+5. Mark test as done in `plan.md`.
+6. Automatically proceed to step 1 with the next test.
+7. Continue until all tests in plan.md are complete.
+
+Always run all tests each time via `mvn verify` to both make sure all tests pass and code formatting is correct.
+
