@@ -1,0 +1,147 @@
+---
+description: Initialize new project from local template - say "init from template"
+globs:
+alwaysApply: true
+---
+
+# Project Initializer Agent
+
+Use this rule to initialize a new Java/Maven project by copying configuration files and Cursor rules from an existing local template repository.
+
+## Trigger
+
+When user says "init from template" or "initialize project from..." followed by a path.
+
+## Requirements
+
+- Template must be a LOCAL path (not a remote GitHub URL)
+- User provides: template path, groupId, artifactId, package name
+- The current project should already be a cloned Git repository (created on GitHub first, then cloned)
+
+## Execution Order (STRICT)
+
+Follow these phases in exact order. Do not skip phases or combine them.
+
+### Phase 1: Information Gathering
+
+Before any file operations, ask the user for:
+
+1. "What is the LOCAL path to the template repository?" (if not already provided)
+2. "What is the new project's groupId?" (e.g., `com.example`)
+3. "What is the new project's artifactId?" (e.g., `my-app`)
+4. "What base package name?" (e.g., `com.example.myapp`)
+
+DO NOT proceed until all answers are provided.
+
+### Phase 2: Template Scan (Read-Only)
+
+Run these terminal commands to understand template structure:
+
+```bash
+ls -la {template}
+ls -la {template}/.cursor/rules/ 2>/dev/null
+ls -la {template}/config/ 2>/dev/null
+cat {template}/pom.xml 2>/dev/null | head -20
+```
+
+Identify which of these exist in the template:
+- `.cursor/rules/` directory with `.mdc` files
+- `config/` directory (checkstyle, spotless, etc.)
+- `.gitignore`
+- `.editorconfig`
+- `LICENSE`
+- `pom.xml` or `build.gradle`
+
+### Phase 3: Bulk Copy (Terminal Commands)
+
+**IMPORTANT**: Use `cp` and `cp -r` terminal commands for copying. DO NOT use read_file/write tools for copying files verbatim.
+
+Copy files that exist in the template, in this order:
+
+```bash
+# 1. Copy config directory (if exists)
+cp -r {template}/config ./config
+
+# 2. Copy .cursor rules (if exists) - but NOT this initializer file
+mkdir -p .cursor/rules
+cp {template}/.cursor/rules/*.mdc .cursor/rules/
+
+# 3. Copy root config files (if they exist)
+cp {template}/.gitignore .gitignore
+cp {template}/.editorconfig .editorconfig
+cp {template}/LICENSE LICENSE
+
+# 4. Create Maven directory structure
+mkdir -p src/main/java src/main/resources src/test/java src/test/resources
+```
+
+Skip any files that don't exist in the template (the commands will fail silently with `2>/dev/null` if needed).
+
+### Phase 4: Verify Copy Success
+
+Run verification commands:
+
+```bash
+ls -la .
+ls -la .cursor/rules/
+ls -la config/
+```
+
+Confirm that expected files were copied. If critical files are missing, STOP and report the issue to the user.
+
+### Phase 5: Template pom.xml (Only File Needing Modification)
+
+This is the only file that requires read/write tools instead of `cp`:
+
+1. Read the template's `pom.xml`:
+   ```bash
+   cat {template}/pom.xml
+   ```
+
+2. Create a new `pom.xml` with these replacements:
+   - `<groupId>` → user's groupId
+   - `<artifactId>` → user's artifactId
+   - `<name>` → user's project name (derive from artifactId)
+   - `<description>` → generic placeholder or ask user
+   - Package paths in any plugin configurations
+
+3. Write the new `pom.xml` to the project root.
+
+4. Create the package directory structure:
+   ```bash
+   mkdir -p src/main/java/{package/path/here}
+   mkdir -p src/test/java/{package/path/here}
+   ```
+   
+   Where `{package/path/here}` is the package name with dots replaced by slashes (e.g., `com/example/myapp`).
+
+### Phase 6: Final Verification
+
+Run final check to show user what was created:
+
+```bash
+find . -type f -not -path './.git/*' | head -30
+cat pom.xml
+```
+
+Report success to the user with a summary of what was copied and created.
+
+## What NOT to Do
+
+- DO NOT use GitHub URLs or attempt to download from remote repositories
+- DO NOT read and write files one-by-one for verbatim copies - use `cp`
+- DO NOT skip the verification phases
+- DO NOT run `git init` - the repo should already be initialized from GitHub clone
+- DO NOT copy this initializer rule file to the new project (it's only needed once)
+
+## Example Usage
+
+User: "init from template /Users/me/repos/my-java-template"
+
+AI response:
+1. "I'll initialize this project from /Users/me/repos/my-java-template. I need a few details:
+   - groupId (e.g., com.example)?
+   - artifactId (e.g., my-app)?
+   - base package (e.g., com.example.myapp)?"
+
+2. After user provides info, AI executes phases 2-6.
