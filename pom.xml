@@ -18,7 +18,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <junit.version>5.10.1</junit.version>
-        <jlama.version>0.8.2</jlama.version>
+        <jlama.version>0.8.4</jlama.version>
     </properties>
 
     <dependencies>
@@ -26,6 +26,17 @@
             <groupId>com.github.tjake</groupId>
             <artifactId>jlama-core</artifactId>
             <version>${jlama.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tjake</groupId>
+            <artifactId>jlama-cli</artifactId>
+            <version>${jlama.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tjake</groupId>
+            <artifactId>jlama-native</artifactId>
+            <version>${jlama.version}</version>
+            <classifier>osx-aarch_64</classifier>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -61,13 +72,43 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.vzurauskas.prototypes.llmbot.LlmBot</mainClass>
+                    <addResourcesToClasspath>true</addResourcesToClasspath>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>
+                                com.vzurauskas.prototypes.llmbot.LlmBot
+                            </mainClass>
+                            <systemProperties>
+                                <property>
+                                    <key>jdk.incubator.vector.VECTOR_ACCESS_OOB_CHECK</key>
+                                    <value>0</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>download-model</id>
+                        <configuration>
+                            <mainClass>
+                                com.github.tjake.jlama.cli.JlamaCli
+                            </mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.2</version>
+                <configuration>
+                    <argLine>
+                        --add-modules jdk.incubator.vector
+                        --enable-native-access=ALL-UNNAMED
+                    </argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
